@@ -16,15 +16,18 @@ module.exports = {
   networks: {
     sepolia: {
       url: process.env.SEPOLIA_RPC,
-      accounts: [process.env.SOURCE_PK]
+      accounts: [process.env.SOURCE_PK],
+      native: "ETH"
     },
     opsepolia: {
       url: process.env.OPTIMISM_SEPOLIA_RPC,
-      accounts: [process.env.SOURCE_PK]
+      accounts: [process.env.SOURCE_PK],
+      native: "ETH"
     },
     monadtestnet: {
       url: process.env.MONAD_TESTNET_RPC,
-      accounts: [process.env.SOURCE_PK]
+      accounts: [process.env.SOURCE_PK],
+      native: "MON"
     }
 
   }
