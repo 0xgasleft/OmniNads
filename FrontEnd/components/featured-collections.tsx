@@ -39,25 +39,6 @@ interface FeaturedCollectionsProps {
 
 const defaultCollections: Collection[] = [
   {
-    id: "1",
-    link: "cultbears",
-    name: "Cult Bears DAO",
-    category: "LAUNCHPAD",
-    description: "A culture shift of 2,000 bears exploring various chains.",
-    itemCount: 2000,
-    logo: "/assets/icons/cult-bears.png",
-    images: [
-      "/assets/cb12.webp",
-      "/assets/cb47.webp",
-      "/assets/cb936.webp",
-      "/assets/cb944.webp"
-    ],
-    gradient: "from-indigo-500 via-purple500 to-pink500",
-    borderColor: "border-none",
-    ctaText: "Go To Launchpad"
-  },
-  
-  {
     id: "2",
     link: "omninads",
     name: "Omni Nads",
