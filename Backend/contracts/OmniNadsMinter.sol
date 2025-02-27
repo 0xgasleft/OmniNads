@@ -3,7 +3,6 @@
 pragma solidity ^0.8.22;
 
 import "@layerzerolabs/onft-evm/contracts/onft721/ONFT721.sol";
-import { SendParam, MessagingFee, MessagingReceipt } from "@layerzerolabs/onft-evm/contracts/onft721/interfaces/IONFT721.sol";
 import "./interfaces/IOmniNadsMinter.sol";
 import "./libs/DynamicONFT.sol";
 
@@ -130,6 +129,7 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         MessagingFee calldata _fee,
         address _refundAddress
     ) external payable override returns (MessagingReceipt memory msgReceipt) {
+
         _debit(msg.sender, _sendParam.tokenId, _sendParam.dstEid);
 
         _sendParam.tokenId = DynamicONFT.encodeTokenInfo(
