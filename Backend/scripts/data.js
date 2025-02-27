@@ -1,9 +1,11 @@
 
 const WHITELIST_ADDRESSES = [
+  "0x7B61605BfE32c36D5df2aEc37707b3fA2f12b8B0",
+  "0x4f5a65e0426264f39019bF608f3D68A6AaE8b4c3",
 
 ]
 
-const MAX_SUPPLY = 0;
+const MAX_SUPPLY = 10;
 
 const DATA = {
     "sepolia": {
