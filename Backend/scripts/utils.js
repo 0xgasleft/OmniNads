@@ -5,7 +5,6 @@ const { DATA, WHITELIST_ADDRESSES, MAX_SUPPLY } = require("./data.js");
 const DEPLOYMENTS_FILE = path.join(__dirname, "../deployments.json");
 const STANDARD_JSON_DIR = path.join(__dirname, "../standard-json");
 
-// Ensure the directory exists
 if (!fs.existsSync(STANDARD_JSON_DIR)) {
   fs.mkdirSync(STANDARD_JSON_DIR, { recursive: true });
 }
@@ -34,18 +33,43 @@ const generateStandardJsonInput = async (hre, contractName) => {
   }
 
   const sourceCode = fs.readFileSync(contractPath, "utf8");
+
+  const dependencyPaths = await hre.run("compile:solidity:get-source-paths");
+  const dependencySources = {};
+
+  for (const depPath of dependencyPaths) {
+    if (fs.existsSync(depPath)) {
+      const relativePath = path.relative(process.cwd(), depPath);
+      dependencySources[relativePath] = { content: fs.readFileSync(depPath, "utf8") };
+    }
+  }
+
+  const layerZeroPath = path.join(process.cwd(), "node_modules/@layerzerolabs");
+  if (fs.existsSync(layerZeroPath)) {
+    const readLayerZeroFiles = (dir) => {
+      fs.readdirSync(dir, { withFileTypes: true }).forEach((file) => {
+        const fullPath = path.join(dir, file.name);
+        const relativePath = `@layerzerolabs/${path.relative(layerZeroPath, fullPath)}`;
+
+        if (file.isDirectory()) {
+          readLayerZeroFiles(fullPath); 
+        } else if (file.name.endsWith(".sol")) {
+          dependencySources[relativePath] = { content: fs.readFileSync(fullPath, "utf8") };
+        }
+      });
+    };
+    readLayerZeroFiles(layerZeroPath);
+  }
+
+  dependencySources[`${contractName}.sol`] = { content: sourceCode };
+
   const solcConfig = hre.config.solidity;
   const optimizer = solcConfig?.settings?.optimizer || { enabled: true, runs: 200 };
   const evmVersion = solcConfig?.settings?.evmVersion || "paris";
 
-  // Construct the Standard JSON Input
   const standardJson = {
     language: "Solidity",
-    sources: {
-      [`${contractName}.sol`]: {
-        content: sourceCode,
-      },
-    },
+    sources: dependencySources,
     settings: {
       optimizer: {
         enabled: optimizer.enabled,
@@ -59,16 +83,20 @@ const generateStandardJsonInput = async (hre, contractName) => {
         "*": {
           "*": [
             "abi",
-            "evm.bytecode.object",
-            "evm.deployedBytecode.object",
-            "evm.methodIdentifiers"
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
           ],
+          "": ["ast"],
         },
       },
+      libraries: {},
     },
   };
 
-  // Save JSON file
   const STANDARD_JSON_DIR = path.join(__dirname, "../standard-json");
   if (!fs.existsSync(STANDARD_JSON_DIR)) {
     fs.mkdirSync(STANDARD_JSON_DIR, { recursive: true });
@@ -96,7 +124,6 @@ const deploy = async (hre, chain, contractName, name, symbol, additional_params 
 
   saveDeployment(chain, contractName, instance.address, instance.interface.format("json"));
 
-  // Generate Standard JSON Input for verification
   await generateStandardJsonInput(hre, contractName);
 };
 
