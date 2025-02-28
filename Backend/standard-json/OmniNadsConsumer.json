@@ -1,0 +1,28 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "OmniNadsConsumer.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n\npragma solidity ^0.8.22;\n\nimport \"@layerzerolabs/onft-evm/contracts/onft721/ONFT721.sol\";\nimport { SendParam, MessagingFee, MessagingReceipt } from \"@layerzerolabs/onft-evm/contracts/onft721/interfaces/IONFT721.sol\";\nimport \"./libs/DynamicONFT.sol\";\n\n\n\ncontract OmniNadsConsumer is ONFT721 {\n\n\n    mapping(uint => DynamicONFT.TokenState) public tokenState;\n\n\n    constructor(\n        string memory _name,\n        string memory _symbol,\n        address _lzEndpoint,\n        address _delegate\n    ) ONFT721(_name, _symbol, _lzEndpoint, _delegate) { }\n\n    \n\n    function send(\n        SendParam memory _sendParam,\n        MessagingFee calldata _fee,\n        address _refundAddress\n    ) external payable override returns (MessagingReceipt memory msgReceipt) {\n        \n        _debit(msg.sender, _sendParam.tokenId, _sendParam.dstEid);\n\n        _sendParam.tokenId = DynamicONFT.encodeTokenInfo(\n            _sendParam.tokenId,\n            tokenState[_sendParam.tokenId]\n        );\n        delete tokenState[_sendParam.tokenId];\n\n        (bytes memory message, bytes memory options) = _buildMsgAndOptions(\n            _sendParam\n        );\n\n        msgReceipt = _lzSend(\n            _sendParam.dstEid,\n            message,\n            options,\n            _fee,\n            _refundAddress\n        );\n\n        emit ONFTSent(\n            msgReceipt.guid,\n            _sendParam.dstEid,\n            msg.sender,\n            _sendParam.tokenId\n        );\n    }\n\n    function _credit(\n        address _to,\n        uint256 _encodedTokenInfo,\n        uint32 /*_srcEid*/\n    ) internal override {\n        \n        (uint256 _tokenId, DynamicONFT.TokenState _receivedState) = DynamicONFT.decodeTokenInfo(\n            _encodedTokenInfo\n        );\n        uint8 _evolvedState = uint8(_receivedState);\n\n        if(_evolvedState < 3)\n        {\n            _evolvedState += 1;\n            emit DynamicONFT.TokenEvolved(_tokenId, _evolvedState);\n        }\n\n        tokenState[_tokenId] = DynamicONFT.TokenState(_evolvedState);\n\n        _mint(_to, _tokenId);\n    }\n\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "paris",
+    "metadata": {
+      "useLiteralContent": true
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object",
+          "evm.methodIdentifiers"
+        ]
+      }
+    }
+  }
+}

@@ -28,6 +28,11 @@ module.exports = {
       url: process.env.MONAD_TESTNET_RPC,
       accounts: [process.env.SOURCE_PK],
       native: "MON"
+    },
+    flowtestnet: {
+      url: process.env.FLOW_TESTNET_RPC,
+      accounts: [process.env.SOURCE_PK],
+      native: "ETH"
     }
 
   }
