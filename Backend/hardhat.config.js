@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+//require("@nomicfoundation/hardhat-verify"); // THE TOOLBOX SHOULD BE DISABLED WHEN USING THIS PLUGIN
 require('dotenv').config({ path: __dirname + '/.env' });
 require("./tasks/deployment");
 
@@ -6,11 +7,19 @@ require("./tasks/deployment");
 module.exports = {
   solidity: {
     version: "0.8.22",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
-      },
+  },
+  sourcify: {
+    enabled: true,
+    apiUrl: "https://sourcify-api-monad.blockvision.org",
+    browserUrl: "https://testnet.monadexplorer.com",
+  },
+  etherscan: {
+    enabled: false,
+  },
+  settings: {
+    optimizer: {
+      enabled: true,
+      runs: 200,
     },
   },
   networks: {
@@ -29,6 +38,5 @@ module.exports = {
       accounts: [process.env.SOURCE_PK],
       native: "MON"
     }
-
   }
 };
