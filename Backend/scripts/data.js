@@ -5,11 +5,11 @@ const WHITELIST_ADDRESSES = [
 
 ]
 
-const MAX_SUPPLY = 10;
+const MAX_SUPPLY = 1111;
 
 const DATA = {
     "sepolia": {
-      "connections": ["monadtestnet", "opsepolia"],
+      "connections": ["monadtestnet", "opsepolia", "flowTestnet"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
       "eid": 40161,
       "deployment": "",
@@ -19,7 +19,7 @@ const DATA = {
       "executor": "0x718B92b5CB0a5552039B593faF724D182A881eDA"
     },
     "opsepolia": {
-      "connections": ["monadtestnet", "sepolia"],
+      "connections": ["monadtestnet", "sepolia", "flowTestnet"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
       "eid": 40232,
       "deployment": "",
@@ -29,7 +29,17 @@ const DATA = {
       "executor": "0xDc0D68899405673b932F0DB7f8A49191491A5bcB"
     },
     "monadtestnet": {
-      "connections": ["sepolia", "opsepolia"],
+      "connections": ["sepolia", "opsepolia", "flowTestnet"],
+      "endpoint": "0x6C7Ab2202C98C4227C5c46f1417D81144DA716Ff",
+      "eid": 40204,
+      "deployment": "",
+      "sendLib": "0xd682ECF100f6F4284138AA925348633B0611Ae21",
+      "receiveLib": "0xcF1B0F4106B0324F96fEfcC31bA9498caa80701C",
+      "dvns": ["0x88b27057a9e00c5f05dda29241027aff63f9e6e0"],
+      "executor": "0x9dB9Ca3305B48F196D18082e91cB64663b13d014"
+    },
+    "flowtestnet": {
+      "connections": ["sepolia", "opsepolia", "monadTestnet"],
       "endpoint": "0x6C7Ab2202C98C4227C5c46f1417D81144DA716Ff",
       "eid": 40204,
       "deployment": "",
