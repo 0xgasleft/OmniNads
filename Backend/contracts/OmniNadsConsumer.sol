@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.22;
 
-import "@layerzerolabs/onft-evm/contracts/onft721/ONFT721.sol";
-import { SendParam, MessagingFee, MessagingReceipt } from "@layerzerolabs/onft-evm/contracts/onft721/interfaces/IONFT721.sol";
+import "./lz/onft/ONFT721.sol";
+import { SendParam, MessagingFee, MessagingReceipt } from "./lz/onft/interfaces/IONFT721.sol";
 import "./libs/DynamicONFT.sol";
 
 

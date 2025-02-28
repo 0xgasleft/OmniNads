@@ -10,13 +10,13 @@ task("deploy-omninad", "Deploy OmniNads")
       console.error("❌ Error deploying OmniNadsMinter:", e);
     }
 
-    for (const consumer of taskArgs.consumers) { // 🔹 Fixed typo: taskArgs.consumer → taskArgs.consumers
+    /*for (const consumer of taskArgs.consumers) { // 🔹 Fixed typo: taskArgs.consumer → taskArgs.consumers
       try {
         await deploy(hre, consumer, "OmniNadsConsumer", "OmniNads", "ONAD");
       } catch (e) {
         console.error("❌ Error deploying OmniNadsConsumer:", e);
       }
-    }
+    }*/
   });
 
   // npx hardhat deploy-omninad --mint monadtestnet opsepolia sepolia flowtestnet

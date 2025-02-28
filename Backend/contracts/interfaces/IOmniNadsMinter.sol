@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-import { SendParam, MessagingFee, MessagingReceipt } from "@layerzerolabs/onft-evm/contracts/onft721/interfaces/IONFT721.sol";
+import { SendParam, MessagingFee, MessagingReceipt } from "../lz/onft/interfaces/IONFT721.sol";
 
 pragma solidity ^0.8.22;
 

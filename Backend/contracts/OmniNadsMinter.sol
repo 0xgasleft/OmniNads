@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.22;
 
-import "@layerzerolabs/onft-evm/contracts/onft721/ONFT721.sol";
+import "./lz/onft/ONFT721.sol";
 import "./interfaces/IOmniNadsMinter.sol";
 import "./libs/DynamicONFT.sol";
 

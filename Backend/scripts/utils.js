@@ -44,7 +44,7 @@ const generateStandardJsonInput = async (hre, contractName) => {
     }
   }
 
-  const layerZeroPath = path.join(process.cwd(), "node_modules/@layerzerolabs");
+  /*const layerZeroPath = path.join(process.cwd(), "node_modules/@layerzerolabs");
   if (fs.existsSync(layerZeroPath)) {
     const readLayerZeroFiles = (dir) => {
       fs.readdirSync(dir, { withFileTypes: true }).forEach((file) => {
@@ -59,7 +59,7 @@ const generateStandardJsonInput = async (hre, contractName) => {
       });
     };
     readLayerZeroFiles(layerZeroPath);
-  }
+  }*/
 
   dependencySources[`${contractName}.sol`] = { content: sourceCode };
 
@@ -82,13 +82,9 @@ const generateStandardJsonInput = async (hre, contractName) => {
       outputSelection: {
         "*": {
           "*": [
-            "abi",
+            "metadata", // <--
             "evm.bytecode",
-            "evm.deployedBytecode",
-            "evm.methodIdentifiers",
-            "metadata",
-            "devdoc",
-            "userdoc",
+            "evm.bytecode.sourceMap"
           ],
           "": ["ast"],
         },
