@@ -3,11 +3,15 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@nomicfoundation/hardhat-verify": "^2.0.13",
-    "hardhat": "^2.22.18"
+    "hardhat": "^2.22.18",
+    "sol-merger": "^4.4.1"
   },
   "dependencies": {
     "@layerzerolabs/oapp-evm": "^0.3.1",
     "@layerzerolabs/onft-evm": "^0.2.2",
     "dotenv": "^16.4.7"
+  },
+  "scripts": {
+    "build-contracts": "sol-merger \"./contracts/*.sol\" ./build"
   }
 }

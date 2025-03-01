@@ -6,10 +6,10 @@ require("./tasks/deployment");
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: "0.8.22",
+    version: "0.8.28",
     settings: {
       optimizer: {
-        enabled: true,
+        enabled: false,
         runs: 200,
       },
     },
@@ -17,12 +17,36 @@ module.exports = {
   sourcify: {
     enabled: true,
     apiUrl: "https://sourcify-api-monad.blockvision.org",
-    browserUrl: "https://testnet.monadexplorer.com",
+    browserUrl: "https://testnet.monadexplorer.com"
   },
   etherscan: {
-    enabled: false,
+    enabled: false
   },
-  
+  /*etherscan: {
+    apiKey: {
+      'flowtestnet': 'empty',
+      'sepolia': process.env.SEPOLIA_API_KEY,
+      "opsepolia": process.env.OP_SEPOLIA_API_KEY
+    },
+    customChains: [
+      {
+        network: "flowtestnet",
+        chainId: 545,
+        urls: {
+          apiURL: "https://evm-testnet.flowscan.io/api",
+          browserURL: "https://evm-testnet.flowscan.io"
+        }
+      },
+      {
+        network: "opsepolia",
+        chainId: 11155420,
+        urls: {
+          apiURL: "https://api-sepolia-optimistic.etherscan.io/api",
+          browserURL: "https://sepolia-optimism.etherscan.io/"
+        }
+      }
+    ]
+  },*/
   networks: {
     sepolia: {
       url: process.env.SEPOLIA_RPC,
@@ -42,7 +66,7 @@ module.exports = {
     flowtestnet: {
       url: process.env.FLOW_TESTNET_RPC,
       accounts: [process.env.SOURCE_PK],
-      native: "ETH"
+      native: "FLOW"
     }
   }
 };
