@@ -108,7 +108,7 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
     function publicMint() external isNotSmartContract {
         require(
             mintInfo._phase == DynamicONFT.MintPhase.PUBLIC,
-            "Not in whitelist phase!"
+            "Not in public phase!"
         );
         _mint();
         emit DynamicONFT.PublicMint(mintInfo._totalSupply, msg.sender);

@@ -8,7 +8,7 @@ const MAX_SUPPLY = 1111;
 
 const DATA = {
     "sepolia": {
-      "connections": ["monadtestnet", "opsepolia", "flowtestnet"],
+      "connections": ["opsepolia"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
       "eid": 40161,
       "deployment": "0x949B0103aD1adcdFCeDAF112302100E61feaEcE4",

@@ -2,8 +2,14 @@ const fs = require("fs");
 const path = require("path");
 const { DATA, WHITELIST_ADDRESSES, MAX_SUPPLY } = require("./data.js");
 
+
+
+
 const DEPLOYMENTS_FILE = path.join(__dirname, "../deployments.json");
 const STANDARD_JSON_DIR = path.join(__dirname, "../standard-json");
+
+
+
 
 if (!fs.existsSync(STANDARD_JSON_DIR)) {
   fs.mkdirSync(STANDARD_JSON_DIR, { recursive: true });
@@ -43,23 +49,6 @@ const generateStandardJsonInput = async (hre, contractName) => {
       dependencySources[relativePath] = { content: fs.readFileSync(depPath, "utf8") };
     }
   }
-
-  /*const layerZeroPath = path.join(process.cwd(), "node_modules/@layerzerolabs");
-  if (fs.existsSync(layerZeroPath)) {
-    const readLayerZeroFiles = (dir) => {
-      fs.readdirSync(dir, { withFileTypes: true }).forEach((file) => {
-        const fullPath = path.join(dir, file.name);
-        const relativePath = `@layerzerolabs/${path.relative(layerZeroPath, fullPath)}`;
-
-        if (file.isDirectory()) {
-          readLayerZeroFiles(fullPath); 
-        } else if (file.name.endsWith(".sol")) {
-          dependencySources[relativePath] = { content: fs.readFileSync(fullPath, "utf8") };
-        }
-      });
-    };
-    readLayerZeroFiles(layerZeroPath);
-  }*/
 
   dependencySources[`${contractName}.sol`] = { content: sourceCode };
 
