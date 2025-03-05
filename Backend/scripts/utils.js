@@ -100,7 +100,7 @@ const deploy = async (hre, chain, contractName, name, symbol, additional_params 
   console.log(`🚀 Deploying ${contractName} on ${chain}...`);
 
   let params = [name.toUpperCase(), symbol, DATA[chain].endpoint, signer.address];
-  if (additional_params) params.push(MAX_SUPPLY, WHITELIST_ADDRESSES);
+  if (additional_params) params.push(MAX_SUPPLY, WHITELIST_ADDRESSES, DATA[chain].executor);
 
   const instance = await hre.ethers.deployContract(contractName, params, signer);
   await instance.deployed();
@@ -112,4 +112,31 @@ const deploy = async (hre, chain, contractName, name, symbol, additional_params 
   await generateStandardJsonInput(hre, contractName);
 };
 
-module.exports = { deploy };
+const deployMessager = async (hre, chain, contractName, additional_params = false) => {
+  const chainObj = hre.config.networks[chain];
+  const rpc = new hre.ethers.providers.JsonRpcProvider(chainObj.url);
+  const signer = new hre.ethers.Wallet(chainObj.accounts[0], rpc);
+
+  console.log(`🚀 Deploying OmniNadsMessager on ${chain}...`);
+
+  let params = [DATA[chain].endpoint, signer.address];
+  if (additional_params)
+  {
+    params.push(DATA[chain].deployment);
+  } 
+  else 
+  {
+    params.push(ethers.constants.AddressZero);
+  }
+
+  const instance = await hre.ethers.deployContract(contractName, params, signer);
+  await instance.deployed();
+
+  console.log(`✅ ${contractName} deployed on ${chain} at: ${instance.address}`);
+
+  saveDeployment(chain, contractName, instance.address, instance.interface.format("json"));
+
+  await generateStandardJsonInput(hre, contractName);
+};
+
+module.exports = { deploy, deployMessager };

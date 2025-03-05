@@ -14,6 +14,7 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
     mapping(uint => DynamicONFT.TokenState) public tokenState;
     mapping(address => bool) private _hasMinted;
     mapping(address => bool) private _isWhitelisted;
+    mapping(address => bool) private _isAllowedSmartContract;
     
 
 
@@ -24,7 +25,8 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         address _lzEndpoint,
         address _delegate,
         uint16 _maxSupply,
-        address[] memory _whitelistedAddresses
+        address[] memory _whitelistedAddresses,
+        address[] memory _allowedSmartContracts
     ) ONFT721(_name, _symbol, _lzEndpoint, _delegate) {
 
         mintInfo._phase = DynamicONFT.MintPhase.DISABLED;
@@ -38,7 +40,13 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
             }
         }
 
-        emit DynamicONFT.WhitelistUpdated();
+        for (uint i = 0; i < _allowedSmartContracts.length; ) {
+            _isAllowedSmartContract[_allowedSmartContracts[i]] = true;
+            unchecked {
+                i++;
+            }
+        }
+
     }
 
     modifier isNotSmartContract() {
@@ -49,7 +57,15 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         _;
     }
 
-    function nextPhase() external onlyOwner {
+    modifier onlyAllowedSmartContract() {
+        require(
+            _isAllowedSmartContract[msg.sender],
+            "Not allowed smart contract!"
+        );
+        _;
+    }
+
+    function nextPhase() external override onlyOwner {
         require(
             mintInfo._phase != DynamicONFT.MintPhase.PUBLIC,
             "Already in last phase!"
@@ -63,18 +79,28 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         }
     }
 
-    function emergencyDisableMint() external onlyOwner {
+    function emergencyDisableMint() external override onlyOwner {
         mintInfo._phase = DynamicONFT.MintPhase.DISABLED;
     }
 
     function addToWhitelist(address _address) external override onlyOwner {
         _isWhitelisted[_address] = true;
-        emit DynamicONFT.WhitelistUpdated();
+        emit DynamicONFT.WhitelistUpdated(_address, true);
     }
 
     function removeFromWhitelist(address _address) external override onlyOwner {
         _isWhitelisted[_address] = false;
-        emit DynamicONFT.WhitelistUpdated();
+        emit DynamicONFT.WhitelistUpdated(_address, false);
+    }
+
+    function addToAllowedSmartContracts(address _address) external override onlyOwner {
+        _isAllowedSmartContract[_address] = true;
+        emit DynamicONFT.AllowedSmartContractUpdated(_address, true);
+    }
+
+    function removeFromAllowedSmartContracts(address _address) external override onlyOwner {
+        _isAllowedSmartContract[_address] = false;
+        emit DynamicONFT.AllowedSmartContractUpdated(_address, false);
     }
 
     function tokenURI(
@@ -88,39 +114,56 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
             );
     }
 
-    function _mint() internal {
+    function _mint(address _minter) internal {
         require(
             mintInfo._maxSupply >= mintInfo._totalSupply,
             "Max supply reached!"
         );
-        require(!_hasMinted[msg.sender], "User already minted!");
+        require(!_hasMinted[_minter], "User already minted!");
 
         unchecked {
             ++mintInfo._totalSupply;
         }
 
-        _hasMinted[msg.sender] = true;
+        _hasMinted[_minter] = true;
         tokenState[mintInfo._totalSupply] = DynamicONFT.TokenState.MINTED;
         
-        _mint(msg.sender, mintInfo._totalSupply);
+        _mint(_minter, mintInfo._totalSupply);
     }
 
-    function publicMint() external isNotSmartContract {
+    function crossChainMint(address _remoteMinter) external override onlyAllowedSmartContract {
+        if(mintInfo._phase == DynamicONFT.MintPhase.PUBLIC)
+        {
+            _mint(_remoteMinter);
+        }
+        else if(mintInfo._phase == DynamicONFT.MintPhase.WHITELIST)
+        {
+            require(_isWhitelisted[_remoteMinter], "User is not whitelisted!");
+            _mint(_remoteMinter);
+        }
+        else
+        {
+            revert("Minting is disabled!");
+        }
+        emit DynamicONFT.PublicMint(mintInfo._totalSupply, msg.sender);
+    }
+
+    function publicMint() external override isNotSmartContract {
         require(
             mintInfo._phase == DynamicONFT.MintPhase.PUBLIC,
             "Not in public phase!"
         );
-        _mint();
+        _mint(msg.sender);
         emit DynamicONFT.PublicMint(mintInfo._totalSupply, msg.sender);
     }
 
-    function whitelistMint() external isNotSmartContract {
+    function whitelistMint() external override isNotSmartContract {
         require(_isWhitelisted[msg.sender], "User is not whitelisted!");
         require(
             mintInfo._phase == DynamicONFT.MintPhase.WHITELIST,
             "Not in whitelist phase!"
         );
-        _mint();
+        _mint(msg.sender);
         emit DynamicONFT.WhitelistMint(mintInfo._totalSupply, msg.sender);
     }
 

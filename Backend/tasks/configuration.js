@@ -250,3 +250,11 @@ task("configure-omninad", "Configure OmniNads")
     }
     
   });
+
+
+  task("configure-messager", "Configure Messager")
+  .addOptionalParam("mint", "Mint chain")
+  .addVariadicPositionalParam("consumers", "Consumer chains")
+  .setAction(async (taskArgs, hre) => {
+    // TO BE IMPLEMENTED
+  });

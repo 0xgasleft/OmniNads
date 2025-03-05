@@ -5,10 +5,13 @@ import { SendParam, MessagingFee, MessagingReceipt } from "../lz/onft/interfaces
 pragma solidity ^0.8.22;
 
 interface IOmniNadsMinter {
-    function whitelistMint() external;
+    function crossChainMint(address _remoteMinter) external;
     function publicMint() external;
+    function whitelistMint() external;
     function emergencyDisableMint() external;
     function nextPhase() external;
     function addToWhitelist(address _address) external;
     function removeFromWhitelist(address _address) external;
+    function addToAllowedSmartContracts(address _address) external;
+    function removeFromAllowedSmartContracts(address _address) external;
 }

@@ -24,11 +24,13 @@ library DynamicONFT {
         MintPhase _phase;
     }
 
-    event WhitelistUpdated();
     event WhitelistPhaseStarted();
     event PublicPhaseStarted();
+    event WhitelistUpdated(address indexed _address, bool _isWhitelisted);
+    event AllowedSmartContractUpdated(address indexed _address, bool _isAllowedSmartContract);
     event WhitelistMint(uint indexed tokenId, address indexed minter);
     event PublicMint(uint indexed tokenId, address indexed minter);
+    event CrossChainMint(uint indexed tokenId, address indexed minter);
     event TokenEvolved(uint indexed tokenId, uint8 indexed evolution);
 
 
