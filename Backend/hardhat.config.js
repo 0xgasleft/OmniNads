@@ -12,7 +12,7 @@ module.exports = {
     version: "0.8.28",
     settings: {
       optimizer: {
-        enabled: false,
+        enabled: true,
         runs: 200,
       },
     },
@@ -27,19 +27,10 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      'flowtestnet': 'empty',
       'sepolia': process.env.SEPOLIA_API_KEY,
       "opsepolia": process.env.OP_SEPOLIA_API_KEY
     },
     customChains: [
-      {
-        network: "flowtestnet",
-        chainId: 545,
-        urls: {
-          apiURL: "https://evm-testnet.flowscan.io/api",
-          browserURL: "https://evm-testnet.flowscan.io"
-        }
-      },
       {
         network: "opsepolia",
         chainId: 11155420,
@@ -65,11 +56,6 @@ module.exports = {
       url: process.env.MONAD_TESTNET_RPC,
       accounts: [process.env.SOURCE_PK],
       native: "MON"
-    },
-    flowtestnet: {
-      url: process.env.FLOW_TESTNET_RPC,
-      accounts: [process.env.SOURCE_PK],
-      native: "FLOW"
     }
   }
 };

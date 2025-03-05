@@ -100,7 +100,7 @@ const deploy = async (hre, chain, contractName, name, symbol, additional_params 
   console.log(`🚀 Deploying ${contractName} on ${chain}...`);
 
   let params = [name.toUpperCase(), symbol, DATA[chain].endpoint, signer.address];
-  if (additional_params) params.push(MAX_SUPPLY, WHITELIST_ADDRESSES, DATA[chain].executor);
+  if (additional_params) params.push(MAX_SUPPLY, WHITELIST_ADDRESSES, [DATA[chain].executor]);
 
   const instance = await hre.ethers.deployContract(contractName, params, signer);
   await instance.deployed();

@@ -229,7 +229,7 @@ task("configure-omninad", "Configure OmniNads")
                                                         hre.ethers, 
                                                         signer, 
                                                         localChain, 
-                                                        localChainName == taskArgs.mint ? "OmniNadsMinter" : "contracts/MergedOmniNadsConsumer.sol:OmniNadsConsumer" 
+                                                        localChainName == taskArgs.mint ? "contracts/merged/MergedOmniNadsMinter.sol:OmniNadsMinter" : "contracts/merged/MergedOmniNadsConsumer.sol:OmniNadsConsumer" 
                                                       );
         
         console.log(`Applying set peers on ${localChainName} with ${remoteChainName}..`);
