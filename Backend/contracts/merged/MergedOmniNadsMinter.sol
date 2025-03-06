@@ -5139,15 +5139,39 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         emit DynamicONFT.AllowedSmartContractUpdated(_address, false);
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
-        _requireOwned(tokenId);
+    function _uintToString(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0";
+        }
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + value % 10));
+            value /= 10;
+        }
+        return string(buffer);
+    }
 
-        return
-            string(
-                abi.encodePacked(baseTokenURI, tokenState[tokenId],"/omni-nad-", tokenId, ".json")
-            );
+    function _tokenStateToString(DynamicONFT.TokenState _state) internal pure returns (string memory) {
+        if (_state == DynamicONFT.TokenState.NIL) return "0";
+        if (_state == DynamicONFT.TokenState.MINTED) return "1";
+        if (_state == DynamicONFT.TokenState.EVOLVED) return "2";
+        if (_state == DynamicONFT.TokenState.ULTIMATE) return "3";
+        return "unknown";
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        _requireOwned(tokenId);
+        string memory tokenIdStr = _uintToString(tokenId);
+        string memory tokenStateStr = _tokenStateToString(tokenState[tokenId]);
+
+        return string(abi.encodePacked(_baseURI(), tokenStateStr, "/omni-nad-", tokenIdStr, ".json"));
     }
 
     function _mint(address _minter) internal {
