@@ -3,6 +3,7 @@ const {Options} = require("@layerzerolabs/lz-v2-utilities");
 
 
 
+const IGNORABLE = ["hardhat"]
 
 
 // HELPERS
@@ -213,6 +214,7 @@ task("configure-omninad", "Configure OmniNads")
     }
     for (const [localChainName, localChain] of Object.entries(DATA))
     {
+      if(IGNORABLE.includes(localChainName)) continue;
       
       console.log("--------------------------------------------------------");
       const hreChain = hre.config.networks[localChainName];

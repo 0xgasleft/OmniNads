@@ -28,10 +28,18 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      'sepolia': process.env.SEPOLIA_API_KEY,
+      'arbsepolia': process.env.ARB_SEPOLIA_API_KEY,
       "opsepolia": process.env.OP_SEPOLIA_API_KEY
     },
     customChains: [
+      {
+        network: "arbepolia",
+        chainId: 421614,
+        urls: {
+            apiURL: "https://api-sepolia.arbiscan.io/api",
+            browserURL: "https://sepolia.arbiscan.io/",
+        }
+      },
       {
         network: "opsepolia",
         chainId: 11155420,
@@ -45,11 +53,11 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: process.env.SEPOLIA_RPC
+        url: process.env.ARBITRUM_SEPOLIA_RPC
       }
     },
-    sepolia: {
-      url: process.env.SEPOLIA_RPC,
+    arbsepolia: {
+      url: process.env.ARBITRUM_SEPOLIA_RPC,
       accounts: [process.env.SOURCE_PK],
       native: "ETH"
     },
