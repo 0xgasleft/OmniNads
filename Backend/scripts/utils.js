@@ -95,7 +95,7 @@ const generateStandardJsonInput = async (hre, contractName) => {
 const deploy = async (hre, chain, contractName, name, symbol, additional_params = false) => {
   const chainObj = hre.config.networks[chain];
   const rpc = new hre.ethers.providers.JsonRpcProvider(chainObj.url);
-  const signer = new hre.ethers.Wallet(chainObj.accounts[0], rpc);
+  const signer = chain == "hardhat" ? (await ethers.getSigners())[0] : new hre.ethers.Wallet(chainObj.accounts[0], rpc);
 
   console.log(`🚀 Deploying ${contractName} on ${chain}...`);
 
@@ -107,9 +107,10 @@ const deploy = async (hre, chain, contractName, name, symbol, additional_params 
 
   console.log(`✅ ${contractName} deployed on ${chain} at: ${instance.address}`);
 
-  saveDeployment(chain, contractName, instance.address, instance.interface.format("json"));
+  //saveDeployment(chain, contractName, instance.address, instance.interface.format("json"));
+  //await generateStandardJsonInput(hre, contractName);
 
-  await generateStandardJsonInput(hre, contractName);
+  return instance;
 };
 
 const deployMessager = async (hre, chain, contractName, additional_params = false) => {

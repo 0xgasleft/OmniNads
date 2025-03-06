@@ -5,6 +5,7 @@ require("./tasks/deployment");
 require("./tasks/configuration");
 require("./tasks/minting");
 require("./tasks/sending");
+require("./tasks/testing");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -42,6 +43,11 @@ module.exports = {
     ]
   },*/
   networks: {
+    hardhat: {
+      forking: {
+        url: process.env.SEPOLIA_RPC
+      }
+    },
     sepolia: {
       url: process.env.SEPOLIA_RPC,
       accounts: [process.env.SOURCE_PK],

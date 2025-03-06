@@ -5,6 +5,7 @@ pragma solidity ^0.8.22;
 import "./lz/onft/ONFT721.sol";
 import "./interfaces/IOmniNadsMinter.sol";
 import "./libs/DynamicONFT.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 
 contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
@@ -110,7 +111,13 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
 
         return
             string(
-                abi.encodePacked(baseTokenURI, tokenState[tokenId],"/omni-nad-", tokenId, ".json")
+                abi.encodePacked(
+                    baseTokenURI, 
+                    Strings.toString(uint(tokenState[tokenId])),
+                    "/omni-nad-", 
+                    Strings.toString(tokenId), 
+                    ".json"
+                )
             );
     }
 

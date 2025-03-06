@@ -4995,11 +4995,13 @@ library DynamicONFT {
         MintPhase _phase;
     }
 
-    event WhitelistUpdated();
     event WhitelistPhaseStarted();
     event PublicPhaseStarted();
+    event WhitelistUpdated(address indexed _address, bool _isWhitelisted);
+    event AllowedSmartContractUpdated(address indexed _address, bool _isAllowedSmartContract);
     event WhitelistMint(uint indexed tokenId, address indexed minter);
     event PublicMint(uint indexed tokenId, address indexed minter);
+    event CrossChainMint(uint indexed tokenId, address indexed minter);
     event TokenEvolved(uint indexed tokenId, uint8 indexed evolution);
 
 
@@ -5028,6 +5030,12 @@ library DynamicONFT {
 }
 
 
+// OpenZeppelin Contracts (last updated v5.2.0) (utils/Strings.sol)
+/**
+ * @dev String operations.
+ */
+
+
 contract OmniNadsConsumer is ONFT721 {
 
 
@@ -5041,6 +5049,23 @@ contract OmniNadsConsumer is ONFT721 {
         address _delegate
     ) ONFT721(_name, _symbol, _lzEndpoint, _delegate) { }
 
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
+        _requireOwned(tokenId);
+
+        return
+            string(
+                abi.encodePacked(
+                    baseTokenURI, 
+                    Strings.toString(uint(tokenState[tokenId])),
+                    "/omni-nad-", 
+                    Strings.toString(tokenId), 
+                    ".json"
+                )
+            );
+    }
     
 
     function send(

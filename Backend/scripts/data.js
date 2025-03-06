@@ -7,6 +7,16 @@ const WHITELIST_ADDRESSES = [
 const MAX_SUPPLY = 1111;
 
 const DATA = {
+    "hardhat": { // FORK of SEPOLIA for TESTING PURPOSE ONLY
+      "connections": ["opsepolia", "monadtestnet"],
+      "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
+      "eid": 40161,
+      "deployment": "0xBa0B7727a8960896d96f1A9557cB0D340c431C35",
+      "sendLib": "0xcc1ae8Cf5D3904Cef3360A9532B477529b177cCE",
+      "receiveLib": "0xdAf00F5eE2158dD58E0d3857851c432E34A3A851",
+      "dvns": ["0x8eebf8b423b73bfca51a1db4b7354aa0bfca9193"],
+      "executor": "0x718B92b5CB0a5552039B593faF724D182A881eDA"
+    },
     "sepolia": {
       "connections": ["opsepolia", "monadtestnet"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",

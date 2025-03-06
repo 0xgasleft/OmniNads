@@ -5043,6 +5043,12 @@ library DynamicONFT {
 }
 
 
+// OpenZeppelin Contracts (last updated v5.2.0) (utils/Strings.sol)
+/**
+ * @dev String operations.
+ */
+
+
 contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
 
 
@@ -5146,7 +5152,13 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
 
         return
             string(
-                abi.encodePacked(baseTokenURI, tokenState[tokenId],"/omni-nad-", tokenId, ".json")
+                abi.encodePacked(
+                    baseTokenURI, 
+                    Strings.toString(uint(tokenState[tokenId])),
+                    "/omni-nad-", 
+                    Strings.toString(tokenId), 
+                    ".json"
+                )
             );
     }
 

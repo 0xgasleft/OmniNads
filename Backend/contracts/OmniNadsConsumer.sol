@@ -5,7 +5,7 @@ pragma solidity ^0.8.22;
 import "./lz/onft/ONFT721.sol";
 import { SendParam, MessagingFee, MessagingReceipt } from "./lz/onft/interfaces/IONFT721.sol";
 import "./libs/DynamicONFT.sol";
-
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 
 contract OmniNadsConsumer is ONFT721 {
@@ -21,6 +21,23 @@ contract OmniNadsConsumer is ONFT721 {
         address _delegate
     ) ONFT721(_name, _symbol, _lzEndpoint, _delegate) { }
 
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
+        _requireOwned(tokenId);
+
+        return
+            string(
+                abi.encodePacked(
+                    baseTokenURI, 
+                    Strings.toString(uint(tokenState[tokenId])),
+                    "/omni-nad-", 
+                    Strings.toString(tokenId), 
+                    ".json"
+                )
+            );
+    }
     
 
     function send(
