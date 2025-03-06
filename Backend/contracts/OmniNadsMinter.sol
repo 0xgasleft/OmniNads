@@ -7,18 +7,13 @@ import "./interfaces/IOmniNadsMinter.sol";
 import "./libs/DynamicONFT.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-
 contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
-
 
     DynamicONFT.MintInfo public mintInfo;
     mapping(uint => DynamicONFT.TokenState) public tokenState;
     mapping(address => bool) private _hasMinted;
     mapping(address => bool) private _isWhitelisted;
     mapping(address => bool) private _isAllowedSmartContract;
-    
-
-
 
     constructor(
         string memory _name,
@@ -104,11 +99,9 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         emit DynamicONFT.AllowedSmartContractUpdated(_address, false);
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         _requireOwned(tokenId);
-
+        
         return
             string(
                 abi.encodePacked(

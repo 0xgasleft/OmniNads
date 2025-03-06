@@ -5145,9 +5145,7 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         emit DynamicONFT.AllowedSmartContractUpdated(_address, false);
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         _requireOwned(tokenId);
 
         return
