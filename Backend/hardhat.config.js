@@ -33,7 +33,7 @@ module.exports = {
     },
     customChains: [
       {
-        network: "arbepolia",
+        network: "arbsepolia",
         chainId: 421614,
         urls: {
             apiURL: "https://api-sepolia.arbiscan.io/api",
