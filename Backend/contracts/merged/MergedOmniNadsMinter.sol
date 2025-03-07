@@ -5051,15 +5051,11 @@ library DynamicONFT {
 
 contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
 
-
     DynamicONFT.MintInfo public mintInfo;
     mapping(uint => DynamicONFT.TokenState) public tokenState;
     mapping(address => bool) private _hasMinted;
     mapping(address => bool) private _isWhitelisted;
     mapping(address => bool) private _isAllowedSmartContract;
-    
-
-
 
     constructor(
         string memory _name,
@@ -5107,6 +5103,11 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         _;
     }
 
+    function totalSupply() external view returns(uint)
+    {
+        return mintInfo._totalSupply;
+    }
+
     function nextPhase() external override onlyOwner {
         require(
             mintInfo._phase != DynamicONFT.MintPhase.PUBLIC,
@@ -5147,15 +5148,13 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         _requireOwned(tokenId);
-
+        
         return
             string(
                 abi.encodePacked(
                     baseTokenURI, 
                     Strings.toString(uint(tokenState[tokenId])),
-                    "/omni-nad-", 
-                    Strings.toString(tokenId), 
-                    ".json"
+                    "/omninad.json"
                 )
             );
     }

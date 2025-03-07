@@ -22,23 +22,18 @@ contract OmniNadsConsumer is ONFT721 {
     ) ONFT721(_name, _symbol, _lzEndpoint, _delegate) { }
 
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         _requireOwned(tokenId);
-
+        
         return
             string(
                 abi.encodePacked(
                     baseTokenURI, 
                     Strings.toString(uint(tokenState[tokenId])),
-                    "/omni-nad-", 
-                    Strings.toString(tokenId), 
-                    ".json"
+                    "/omninad.json"
                 )
             );
     }
-    
 
     function send(
         SendParam memory _sendParam,

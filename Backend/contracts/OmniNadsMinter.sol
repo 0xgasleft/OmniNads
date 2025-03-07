@@ -61,6 +61,11 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
         _;
     }
 
+    function totalSupply() external view returns(uint)
+    {
+        return mintInfo._totalSupply;
+    }
+
     function nextPhase() external override onlyOwner {
         require(
             mintInfo._phase != DynamicONFT.MintPhase.PUBLIC,
@@ -107,9 +112,7 @@ contract OmniNadsMinter is IOmniNadsMinter, ONFT721 {
                 abi.encodePacked(
                     baseTokenURI, 
                     Strings.toString(uint(tokenState[tokenId])),
-                    "/omni-nad-", 
-                    Strings.toString(tokenId), 
-                    ".json"
+                    "/omninad.json"
                 )
             );
     }

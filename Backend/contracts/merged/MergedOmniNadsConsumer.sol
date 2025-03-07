@@ -4914,7 +4914,6 @@ abstract contract ONFT721Core is IONFT721, OApp, OAppPreCrimeSimulator, OAppOpti
     function _credit(address /*_to*/, uint256 /*_tokenId*/, uint32 /*_srcEid*/) internal virtual;
 }
 
-
 /**
  * @title ONFT721 Contract
  * @dev ONFT721 is an ERC-721 token that extends the functionality of the ONFT721Core contract.
@@ -5050,23 +5049,18 @@ contract OmniNadsConsumer is ONFT721 {
     ) ONFT721(_name, _symbol, _lzEndpoint, _delegate) { }
 
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         _requireOwned(tokenId);
-
+        
         return
             string(
                 abi.encodePacked(
                     baseTokenURI, 
                     Strings.toString(uint(tokenState[tokenId])),
-                    "/omni-nad-", 
-                    Strings.toString(tokenId), 
-                    ".json"
+                    "/omninad.json"
                 )
             );
     }
-    
 
     function send(
         SendParam memory _sendParam,
