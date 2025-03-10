@@ -8,44 +8,56 @@ const MAX_SUPPLY = 10_000;
 
 const DATA = {
     "hardhat": { // FORK of ARB SEPOLIA for TESTING PURPOSE ONLY
-      "connections": ["opsepolia", "monadtestnet"],
+      "evolution_connections": ["opsepolia", "monadtestnet"],
+      "minting_connections": ["monadtestnet"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
       "eid": 40231,
       "deployment": "0xf44d59B1Eb6852FA9Cf4a7bC9a3211BADF0B66cf",
+      "messager": "",
       "sendLib": "0x4f7cd4DA19ABB31b0eC98b9066B9e857B1bf9C0E",
       "receiveLib": "0x75Db67CDab2824970131D5aa9CECfC9F69c69636",
       "dvns": ["0x53f488e93b4f1b60e8e83aa374dbe1780a1ee8a8"],
-      "executor": "0x5Df3a1cEbBD9c8BA7F8dF51Fd632A9aef8308897"
+      "executor": "0x5Df3a1cEbBD9c8BA7F8dF51Fd632A9aef8308897",
+      "allowed": []
     },
     "arbsepolia": {
-      "connections": ["opsepolia", "monadtestnet"],
+      "evolution_connections": ["opsepolia", "monadtestnet"],
+      "minting_connections": ["monadtestnet"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
       "eid": 40231,
       "deployment": "0xf44d59B1Eb6852FA9Cf4a7bC9a3211BADF0B66cf",
+      "messager": "0xdEd5fD40b502e160A76B3Ad207bC3b121A1d58fc",
       "sendLib": "0x4f7cd4DA19ABB31b0eC98b9066B9e857B1bf9C0E",
       "receiveLib": "0x75Db67CDab2824970131D5aa9CECfC9F69c69636",
       "dvns": ["0x53f488e93b4f1b60e8e83aa374dbe1780a1ee8a8"],
-      "executor": "0x5Df3a1cEbBD9c8BA7F8dF51Fd632A9aef8308897"
+      "executor": "0x5Df3a1cEbBD9c8BA7F8dF51Fd632A9aef8308897",
+      "allowed": []
     },
     "opsepolia": {
-      "connections": ["arbsepolia"],
+      "evolution_connections": ["arbsepolia"],
+      "minting_connections": ["monadtestnet"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
       "eid": 40232,
       "deployment": "0x882Cd279A5e3A97F51B4590A408F2eEA8082aF36",
+      "messager": "0x3F18c5797b48D489694dE4cC263C36f7de3ABf7b",
       "sendLib": "0xB31D2cb502E25B30C651842C7C3293c51Fe6d16f",
       "receiveLib": "0x9284fd59B95b9143AF0b9795CAC16eb3C723C9Ca",
       "dvns": ["0xd680ec569f269aa7015f7979b4f1239b5aa4582c"],
-      "executor": "0xDc0D68899405673b932F0DB7f8A49191491A5bcB"
+      "executor": "0xDc0D68899405673b932F0DB7f8A49191491A5bcB",
+      "allowed": []
     },
     "monadtestnet": {
-      "connections": ["arbsepolia"],
+      "evolution_connections": ["arbsepolia"],
+      "minting_connections": ["arbsepolia", "opsepolia"],
       "endpoint": "0x6C7Ab2202C98C4227C5c46f1417D81144DA716Ff",
       "eid": 40204,
       "deployment": "0xf5a391D2409993f0FF7EF189ceEDB36643584dA2",
+      "messager": "0xA41E6A28aaB7A67F10a27a33a9E70545E3dd8c45",
       "sendLib": "0xd682ECF100f6F4284138AA925348633B0611Ae21",
       "receiveLib": "0xcF1B0F4106B0324F96fEfcC31bA9498caa80701C",
       "dvns": ["0x88b27057a9e00c5f05dda29241027aff63f9e6e0"],
-      "executor": "0x9dB9Ca3305B48F196D18082e91cB64663b13d014"
+      "executor": "0x9dB9Ca3305B48F196D18082e91cB64663b13d014",
+      "allowed": ["0xA41E6A28aaB7A67F10a27a33a9E70545E3dd8c45"]
     }
   }
 

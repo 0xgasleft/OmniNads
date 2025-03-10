@@ -1,16 +1,17 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
 import { OApp, Origin, MessagingFee } from "./lz/oapp/OApp.sol";
 import { OAppOptionsType3 } from "./lz/oapp/libs/OAppOptionsType3.sol";
 import { IOmniNadsMinter } from "./interfaces/IOmniNadsMinter.sol";
+import { IOmniNadsMessager } from "./interfaces/IOmniNadsMessager.sol";
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 
 
 
-contract OmniNadsMessager is OApp, OAppOptionsType3 {
+contract OmniNadsMessager is IOmniNadsMessager, OApp, OAppOptionsType3 {
 
     uint public constant MONAD_CHAIN_ID = 10143;
     uint32 public constant MONAD_LZ_EID = 40204;
@@ -29,9 +30,9 @@ contract OmniNadsMessager is OApp, OAppOptionsType3 {
         omniNadsMinter = _omniNadsMinter;
     }
 
-    function quote() public view returns (uint256) 
+    function quoteRequest(bytes memory _options) public view returns (uint256) 
     {
-        return _quote(MONAD_LZ_EID, hex"", hex"", false).nativeFee;
+        return _quote(MONAD_LZ_EID, hex"", _options, false).nativeFee;
     }
 
     function getChainId() public view returns (uint _chainId) {
@@ -40,14 +41,14 @@ contract OmniNadsMessager is OApp, OAppOptionsType3 {
         }
     }
 
-    function send() external payable {
-        uint _fee = quote();
+    function requestCrossChainMint(bytes memory _options) external payable {
+        uint _fee = quoteRequest(_options);
         require(msg.value >= _fee, "OmniNadsMessager: Insufficient fee");
 
         _lzSend(
             MONAD_LZ_EID,
             hex"",
-            hex"",
+            _options,
             MessagingFee(_fee, 0),
             payable(msg.sender)
         );
@@ -62,6 +63,7 @@ contract OmniNadsMessager is OApp, OAppOptionsType3 {
     ) internal override 
     {
         require(getChainId() == MONAD_CHAIN_ID, "OmniNadsMessager: Receiving only allowed on Monad chain");
+        require(omniNadsMinter != address(0), "OmniNadsMinter address not set!");
 
         IOmniNadsMinter(omniNadsMinter).crossChainMint(address(uint160(uint(_origin.sender))));
     }

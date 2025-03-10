@@ -68,7 +68,7 @@ task("send-omninad", "Send OmniNad cross-chain")
                                                     hre.ethers, 
                                                     signer, 
                                                     localChain,
-                                                    taskArgs.source == "flowtestnet" ? "OmniNadsMinter" : "contracts/MergedOmniNadsConsumer.sol:OmniNadsConsumer"
+                                                    taskArgs.source == "monadtestnet" ? "contracts/MergedOmniNadsMinter.sol:OmniNadsMinter" : "contracts/MergedOmniNadsConsumer.sol:OmniNadsConsumer"
                                                   );
     
     console.log(`Sending from ${taskArgs.source} to ${taskArgs.destination} !`);

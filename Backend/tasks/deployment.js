@@ -19,23 +19,23 @@ task("deploy-omninad", "Deploy OmniNads")
     }
   });
 
-  /*task("deploy-messager", "Deploy Messager")
+  task("deploy-messager", "Deploy Messager")
   .addParam("mint", "Mint chain")
   .addVariadicPositionalParam("consumers", "Consumer chains")
   .setAction(async (taskArgs, hre) => {
     try {
-      await deployMessager(hre, taskArgs.mint, "OmniNadsMessager", true);
+      await deployMessager(hre, taskArgs.mint, "contracts/merged/MergedOmniNadsMessager.sol:OmniNadsMessager", true);
     } catch (e) {
-      console.error("❌ Error deploying OmniNadsMinter:", e);
+      console.error("❌ Error deploying OmniNadsMessager:", e);
     }
 
     for (const consumer of taskArgs.consumers) { 
       try {
-        await deploy(hre, consumer, "OmniNadsMessager");
+        await deployMessager(hre, consumer, "contracts/merged/MergedOmniNadsMessager.sol:OmniNadsMessager");
       } catch (e) {
         console.error("❌ Error deploying OmniNadsMessager:", e);
       }
     }
-  });*/
+  });
 
-  // npx hardhat deploy-omninad --mint monadtestnet opsepolia sepolia flowtestnet
+  
