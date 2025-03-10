@@ -32,7 +32,7 @@ contract OmniNadsMessager is IOmniNadsMessager, OApp, OAppOptionsType3 {
 
     function quoteRequest(bytes memory _options) public view returns (uint256) 
     {
-        return _quote(MONAD_LZ_EID, hex"", _options, false).nativeFee;
+        return _quote(MONAD_LZ_EID, abi.encode(tx.origin), _options, false).nativeFee;
     }
 
     function getChainId() public view returns (uint _chainId) {
@@ -47,7 +47,7 @@ contract OmniNadsMessager is IOmniNadsMessager, OApp, OAppOptionsType3 {
 
         _lzSend(
             MONAD_LZ_EID,
-            hex"",
+            abi.encode(tx.origin),
             _options,
             MessagingFee(_fee, 0),
             payable(msg.sender)
@@ -55,9 +55,9 @@ contract OmniNadsMessager is IOmniNadsMessager, OApp, OAppOptionsType3 {
     }
 
     function _lzReceive(
-        Origin calldata _origin,
+        Origin calldata,
         bytes32,
-        bytes calldata,
+        bytes calldata _payload,
         address,
         bytes calldata
     ) internal override 
@@ -65,7 +65,7 @@ contract OmniNadsMessager is IOmniNadsMessager, OApp, OAppOptionsType3 {
         require(getChainId() == MONAD_CHAIN_ID, "OmniNadsMessager: Receiving only allowed on Monad chain");
         require(omniNadsMinter != address(0), "OmniNadsMinter address not set!");
 
-        IOmniNadsMinter(omniNadsMinter).crossChainMint(address(uint160(uint(_origin.sender))));
+        IOmniNadsMinter(omniNadsMinter).crossChainMint(abi.decode(_payload, (address)));
     }
 
     function withdrawNative(address _to) external onlyOwner {
