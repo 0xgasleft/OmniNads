@@ -1,0 +1,1 @@
+export type ChainNames = "Avalanche Fuji" | "Base Sepolia" | "Soneium Minato" | "Sei Testnet" | "Sonic Testnet" | "Sepolia" | "Arbitrum Sepolia" | "OP Sepolia" | "Polygon Amoy" | "Binance Smart Chain Testnet" | "Monad Testnet" | "Flow EVM Testnet" ;
