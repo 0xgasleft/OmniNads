@@ -27,6 +27,7 @@ import { useAppDispatch } from "@/app/hooks"
 import { toast } from "../ui/use-toast"
 import { mintMultiple } from "@/app/features/nft/mintMultipleThunk"
 import { publicMint } from "@/app/features/nft/publicMint"
+import { whitelistMint } from "@/app/features/nft/whitelistMint"
 import { explorers, getExplorerUrl, getSubgraphUrl } from "@/utils/chainHelpers"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { Label } from "../ui/label"
@@ -38,6 +39,8 @@ import { NetworkSelector } from "./network-selection"
 
 import collectionConfig from "../../config/collectionConfig"
 import NFTMintPopup from "../nft-mint-popup"
+import { getMintInfo } from "@/app/features/nft/getMintInfo"
+import { requestCrossChainMint } from "@/app/features/nft/requestCrossChainMint"
 
 interface Rarity {
   name: string
@@ -111,12 +114,7 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
   const [selectedRarity, setSelectedRarity] = useState("Common")
   const [dynamicRarities, setDynamicRarities] = useState(defaultRarities || [])
   const [mintCount, setMintCount] = useState(0)
-
-  const totalMinted = hasRarities
-    ? dynamicRarities.reduce((acc, r) => acc + r.minted, 0)
-    : 0
-  const mintPercentage = Math.round((totalMinted / totalSupply) * 100)
-
+  const [mintInfo, setMintInfo] = useState<{ totalSupply: number; maxSupply: number } | null>(null)
   const walletClient = useWalletClient()
   const dispatch = useAppDispatch()
 
@@ -134,6 +132,32 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
       : "monad"
 
   const isValidNetwork = networks.some((net) => net.id === chainIdFromWallet)
+
+  useEffect(() => {
+    async function fetchMintInfo() {
+      if (!walletClient?.data?.account) return
+
+      try {
+        const result = await dispatch(
+          getMintInfo({ collectionName, chainId: chainIdFromWallet, walletClient })
+        ).unwrap()
+
+        setMintInfo({
+          totalSupply: result.totalSupply,
+          maxSupply: result.maxSupply
+        })
+      } catch (error) {
+        console.error("Failed to fetch mint info:", error)
+      }
+    }
+
+    fetchMintInfo()
+  }, [walletClient, chainIdFromWallet, dispatch]);
+
+  const totalMinted = collectionName.toLowerCase() === "cultbears"
+    ? dynamicRarities.reduce((acc, r) => acc + r.minted, 0) 
+    : mintInfo?.totalSupply ?? 0 
+  const mintPercentage = Math.round((totalMinted / totalSupply) * 100)
 
   const isSoldOut = () => {
     const selectedRarityData = dynamicRarities.find(
@@ -276,6 +300,9 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
     }
   }
 
+  const chainConfigForCurrentWallet = config.contractAddresses?.[chainIdFromWallet]
+  const chainHasConsumer = !!chainConfigForCurrentWallet?.consumer
+
   const handleMintAndSubscribe = async () => {
     if (!walletClient?.data?.account) {
       toast({
@@ -317,62 +344,120 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
     const { crypto } = hasRarities ? handlePriceDisplay() : { crypto: "0" }
     const value = hasRarities ? toBigIntWith18Decimals(crypto) : BigInt(0)
 
-    try {
-      let result
+    if (collectionName.toLowerCase() !== "cultbears" && chainHasConsumer) {
+      try {
+        const result = await dispatch(
+          requestCrossChainMint({
+            collectionName,
+            chainId: chainIdFromWallet,
+            walletClient
+          })
+        ).unwrap()
 
-      if (collectionName.toLowerCase() === "cultbears") {
-        result = await dispatch(
-          mintMultiple({
-            collectionName,
-            mintAmount: 1,
-            rarity: rarityId,
-            chainId,
-            account,
-            walletClient,
-            value,
-          })
-        ).unwrap()
-      } else {
-        result = await dispatch(
-          publicMint({
-            collectionName,
-            chainId,
-            walletClient,
-            account,
-            value,
-          })
-        ).unwrap()
+        const txUrl = `${EXPLORER_URL}tx/${result.txHash}`
+        setShowPopup(true)
+
+        setTimeout(() => {
+          setMintCount((prev) => prev + 1)
+        }, 5000)
+
+        toast({
+          description: (
+            <div>
+              Cross-chain mint successful!{" "}
+              <a
+                href={txUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-purple300"
+              >
+                View Transaction
+              </a>
+            </div>
+          ),
+        })
+      } catch (error: any) {
+        console.error("Cross-chain mint failed:", error)
+        toast({
+          description: `Cross-chain mint failed: ${error.message || error}`,
+        })
       }
+    } else {
+      const account = walletClient.data.account.address
+      const { crypto } = hasRarities ? handlePriceDisplay() : { crypto: "0" }
+      const value = hasRarities ? toBigIntWith18Decimals(crypto) : BigInt(0)
 
-      const receipt = result as MintReceipt
-      const txUrl = `${EXPLORER_URL}tx/${receipt.transactionHash}`
+      try {
+        let result
+        if (collectionName.toLowerCase() === "cultbears") {
+          result = await dispatch(
+            mintMultiple({
+              collectionName,
+              mintAmount: 1,
+              rarity: hasRarities ? rarityMap[selectedRarity] : 0,
+              chainId: chainIdFromWallet,
+              account,
+              walletClient,
+              value,
+            })
+          ).unwrap()
+        } else {
+          const { phase } = await dispatch(
+            getMintInfo({ walletClient, collectionName, chainId: chainIdFromWallet })
+          ).unwrap()
 
-      setShowPopup(true)
+          if (phase === 1) {
+            result = await dispatch(
+              whitelistMint({
+                collectionName,
+                chainId: chainIdFromWallet,
+                walletClient,
+                account,
+                value,
+              })
+            ).unwrap()
+          } else {
+            result = await dispatch(
+              publicMint({
+                collectionName,
+                chainId: chainIdFromWallet,
+                walletClient,
+                account,
+                value,
+              })
+            ).unwrap()
+          }
+        }
 
-      setTimeout(() => {
-        setMintCount((prev) => prev + 1)
-      }, 5000)
+        const txReceipt = result as MintReceipt
+        const txUrl = `${EXPLORER_URL}tx/${txReceipt.transactionHash}`
+        setShowPopup(true)
 
-      toast({
-        description: (
-          <div>
-            Mint successful! 🎉{" "}
-            <a
-              href={txUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline text-purple300"
-            >
-              View Transaction
-            </a>
-          </div>
-        ),
-      })
-    } catch (error: any) {
-      console.error("Minting failed:", error)
-      toast({
-        description: `Minting failed: ${error.message || error}`,
-      })
+        setTimeout(() => {
+          setMintCount((prev) => prev + 1)
+        }, 5000)
+
+        toast({
+          description: (
+            <div>
+              Mint successful! 🎉{" "}
+              <a
+                href={txUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-purple300"
+              >
+                View Transaction
+              </a>
+            </div>
+          ),
+        })
+      } catch (error: any) {
+        console.error("Minting failed:", error)
+        toast({
+          description: `Minting failed: ${error.message || error}`,
+        })
+      }
     }
   }
 

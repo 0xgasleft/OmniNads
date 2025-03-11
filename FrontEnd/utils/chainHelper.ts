@@ -95,17 +95,18 @@ export function getSubgraphUrl(chainId: number): string {
     return process.env.NEXT_PUBLIC_SUBGRAPH_URL_SONIC_BLAZE ?? ""
   } else if (chainId === SONEIUM_MINATO_ID) {
     return process.env.NEXT_PUBLIC_SUBGRAPH_URL_SONEIUM_MINATO ?? ""
+  } else if (chainId === MONAD_TESTNET_ID) {
+    return process.env.NEXT_PUBLIC_SUBGRAPH_URL_MONAD_TESTNET ?? ""
   }
 
-  // fallback
   return process.env.NEXT_PUBLIC_SUBGRAPH_URL_BASE_SEPOLIA ?? ""
 }
 
+// 5. getCollectionContractAddress by collectionName and chainId
 export function getCollectionContractAddress(
   collectionName: string,
   chainId: number
 ): string | undefined {
-  // 1. Find that collection
   const key = collectionName.toLowerCase()
   const config = collectionConfig[key]
   if (!config) {
@@ -113,6 +114,18 @@ export function getCollectionContractAddress(
     return undefined
   }
 
-  // 2. Return address for given chainId
-  return config.contractAddresses[chainId]
+  const contractType = config.contractAddresses[chainId]
+  if (!contractType) {
+    console.warn(`No contract address for chainId ${chainId} in collection ${collectionName}`)
+    return undefined
+  }
+
+  // Return the desired contract address string. 
+  const address = contractType.cultbears || contractType.minter || contractType.consumer || contractType.messenger
+  if (!address) {
+    console.warn(`No valid contract address found for chainId ${chainId} in collection ${collectionName}`)
+    return undefined
+  }
+  
+  return address
 }
