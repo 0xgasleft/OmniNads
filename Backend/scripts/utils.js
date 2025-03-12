@@ -189,7 +189,7 @@ const trustRemote = async (ctrtInstance, remoteChain, forMessager=false) => {
 
 const configureItGlobally = async (ctrtInstance, remoteChain) => {
   const enforcedOptions = craftEnforcedOptions(remoteChain.eid);
-  console.log(enforcedOptions);
+
   const txResp = await ctrtInstance.setEnforcedOptions(enforcedOptions);
   await txResp.wait();
   

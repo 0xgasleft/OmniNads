@@ -32,7 +32,7 @@ const DATA = {
       "executor": "0x5Df3a1cEbBD9c8BA7F8dF51Fd632A9aef8308897"
     },
     "opsepolia": {
-      "evolution_connections": ["arbsepolia"],
+      "evolution_connections": ["arbsepolia", "monadtestnet"],
       "minting_connections": ["monadtestnet"],
       "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
       "eid": 40232,
@@ -44,7 +44,7 @@ const DATA = {
       "executor": "0xDc0D68899405673b932F0DB7f8A49191491A5bcB"
     },
     "monadtestnet": {
-      "evolution_connections": ["arbsepolia"],
+      "evolution_connections": ["opsepolia", "arbsepolia",],
       "minting_connections": ["arbsepolia", "opsepolia"],
       "endpoint": "0x6C7Ab2202C98C4227C5c46f1417D81144DA716Ff",
       "eid": 40204,
