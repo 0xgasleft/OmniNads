@@ -4,7 +4,7 @@ import { getPublicClient } from "@/config/getPublicClient"
 import { deepSerialize } from "@/utils/helpers"
 import { getCollectionContractAddress } from "@/utils/chainHelpers"
 
-export interface publicMintArgs {
+export interface whitelistMintArgs {
   collectionName: string 
   chainId: number
   walletClient: any
@@ -12,12 +12,12 @@ export interface publicMintArgs {
   value: bigint 
 }
 
-export const publicMint = createAsyncThunk<
+export const whitelistMint = createAsyncThunk<
   unknown,           
-  publicMintArgs,  
+  whitelistMintArgs,  
   { rejectValue: string }
 >(
-  "nft/publicMint",
+  "nft/whitelistMint",
   async (
     { collectionName, chainId, walletClient, value },
     { rejectWithValue }
@@ -37,15 +37,13 @@ export const publicMint = createAsyncThunk<
       let args: any[]
 
         abi = [
-          {
-            type: "function",
-            name: "publicMint",
-            constant: false,
-            payable: false,
-            gas: 29000000,
-            inputs: [],
-            outputs: []
-          },
+            {
+              inputs: [],
+              name: "whitelistMint",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function"
+              }
         ] as const
 
         args = []
@@ -54,7 +52,7 @@ export const publicMint = createAsyncThunk<
         account: walletClient.data.account,
         address: contractAddress,
         abi,
-        functionName: "publicMint",
+        functionName: "whitelistMint",
         args,
         value,
       })

@@ -43,7 +43,8 @@ export default function ProjectOverview({ collectionName }: ProjectOverviewProps
     utility
   } = config;
 
-  const currentContractAddress = contractAddresses?.[chainId] ?? "";
+  const currentContractObj = contractAddresses?.[chainId];
+  const currentContractAddress = currentContractObj?.minter || currentContractObj?.consumer || currentContractObj?.cultbears;
 
   const safeTeamMembers = teamMembers ?? []; 
 

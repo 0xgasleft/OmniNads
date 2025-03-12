@@ -62,6 +62,13 @@ export interface MintStage {
   details?: string
 }
 
+export interface ContractType {
+  minter?: string
+  consumer?: string
+  cultbears?: string
+  messenger?: string;
+}
+
 export interface CollectionConfig {
   title: string
   images: StaticImageData[]
@@ -71,7 +78,7 @@ export interface CollectionConfig {
   bridgeTitle2?: string
   bridgeSlogan2?: string
   bridgeCTA?: string
-  contractAddresses: Record<number, string> 
+  contractAddresses: Record<number, ContractType> 
   totalSupply: number
   networks: Network[]
   rarities?: Rarity[]
@@ -82,6 +89,8 @@ export interface CollectionConfig {
   socials?: Socials
   about?: string
   utility?: string
+  baseUri?: string
+  baseUris?: Record<number, string>
 }
 
 const collectionConfig: Record<string, CollectionConfig> = {
@@ -95,8 +104,8 @@ const collectionConfig: Record<string, CollectionConfig> = {
     bridgeSlogan2: "Bridge your Cult Bear to another network with just a few clicks",
     bridgeCTA: "Buy a Cult Bear",
     contractAddresses: {
-      43113: "0xb1a40746dc35d00ECE291895716D7f20Cb747f14", // Avalanche Fuji
-      84532: "0xb1a40746dc35d00ECE291895716D7f20Cb747f14", // Base Sepolia
+      43113: { cultbears: "0xb1a40746dc35d00ECE291895716D7f20Cb747f14"}, // Avalanche Fuji
+      84532: { cultbears: "0xb1a40746dc35d00ECE291895716D7f20Cb747f14"}, // Base Sepolia
     },
     totalSupply: 2000,
     networks: [
@@ -168,43 +177,47 @@ const collectionConfig: Record<string, CollectionConfig> = {
       twitter: "https://twitter.com/cultbearsdao",
       website: "https://cultbearsdao.com",
     },
+    baseUri: "https://arweave.net/yEZJbyNFfcsw-aweLmt8q6lXTJTMgiMLg_1JVM9QpDU/"
   },
   omninads: {
     title: "Omni Nads",
-    images: [OmniNads1, OmniNads2, OmniNads3, OmniNads4],
+    images: [OmniNads1, OmniNads2, OmniNads3],
     bridgeImage: OmniNads1,
     bridgeTitle1: "Join Omni Nads!",
     bridgeSlogan1: "Get your own Omni Nads NFT and join our exclusive community",
     bridgeTitle2: "Ready to Bridge Your Nads?",
     bridgeSlogan2: "Bridge your Omni Nads to another network with just a few clicks",
     bridgeCTA: "Buy Omni Nads",
-    contractAddresses: {
-      11155111: "0x949B0103aD1adcdFCeDAF112302100E61feaEcE4", // Sepolia Testnet
-      10143: "0xf256b31E041A31a65841d0b50aD335A0d2Cd2324", // Monad Testnet
-      11155420: "0xCb271Ec51465BD28484fe1C094C48aFe882265DB", // OP Testnet
-      545: "0xA8321B2CD1d393A328024faDD07a0284F47ae321", // Flow EVM Testnet Minter
+    contractAddresses: { 
+      10143: { 
+        minter: "0xf5a391D2409993f0FF7EF189ceEDB36643584dA2",
+        messenger: "0x576ed1e774d1321a747471C19e59da0A149b6a44" 
+      }, // Monad Testnet
+      421614: { 
+        consumer: "0xf44d59B1Eb6852FA9Cf4a7bC9a3211BADF0B66cf",
+        messenger: "0x15047e9EC5Be03247411CD323360f8b13366431b" 
+      }, // Arbitrum Testnet
+      11155420: { 
+        consumer: "0x882Cd279A5e3A97F51B4590A408F2eEA8082aF36",
+        messenger: "0xF8Aa29d8319b21D9435e278c0074159AbB8AedE7" 
+      }, // OP Testnet
     },
-    totalSupply: 1111,
+    totalSupply: 10000,
     networks: [
-      {
-        id: 11155111,
-        name: "Ethereum Sepolia",
-        icon: ETH.src,
-      },
       {
         id: 10143,
         name: "Monad Testnet",
         icon: MONAD1.src,
       },
       {
+        id: 421614,
+        name: "Arbitrum Sepolia",
+        icon: ARB.src,
+      },
+      {
         id: 11155420,
         name: "OP Testnet",
         icon: OP.src,
-      },
-      {
-        id: 545,
-        name: "Flow EVM Testnet",
-        icon: FLOW.src,
       },
     ],
     mintStages: [
@@ -229,6 +242,11 @@ const collectionConfig: Record<string, CollectionConfig> = {
       discord: "https://discord.com/invite/HjGGfMR7Ux",
       twitter: "https://twitter.com/cultbearsdao",
       website: "https://cultbearsdao.com",
+    },
+    baseUris: {
+      10143: "https://arweave.net/XI2afr4wHl_M78ovIGYzCPvU0O8126DndmZ-L3VjrMY/monad/",
+      421614: "https://arweave.net/XI2afr4wHl_M78ovIGYzCPvU0O8126DndmZ-L3VjrMY/arbitrum/",
+      11155420: "https://arweave.net/XI2afr4wHl_M78ovIGYzCPvU0O8126DndmZ-L3VjrMY/optimism/",
     },
   },
 }

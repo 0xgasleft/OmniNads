@@ -85,11 +85,11 @@ The `OmniNadsMessager` contract facilitates cross-chain minting requests for the
 
 ## Folders
 
-### merged
+### 'merged'
 
 Merged folder contains the same contracts as in "../" but with full libs and external dependencies embedded into one file. Merged versions are used for deployment & contract verification (with sourcify & etherscan) on explorers.
 
-### lz
+### 'lz'
 
 The `lz` folder contains the LayerZero protocol-related contracts and libraries. These contracts facilitate cross-chain communication and interactions. Key components include:
 
@@ -99,11 +99,11 @@ The `lz` folder contains the LayerZero protocol-related contracts and libraries.
 - **protocol**: Contains interfaces and libraries for the LayerZero protocol.
 - **solidity-bytes-utils**: Contains utility libraries for handling byte arrays in Solidity.
 
-### interfaces
+### 'interfaces'
 
 The `interfaces` folder contains interface definitions for various contracts used in the OmniNads project. These interfaces define the functions and events that the contracts must implement, ensuring consistency and interoperability.
 
-### DynamicONFT Library
+### 'libs/DynamicONFT'
 
 The `DynamicONFT` library is a Solidity library designed to manage the state and minting phases of Omnichain Non-Fungible Tokens (ONFTs). It provides utility functions and data structures to handle token states, minting phases, and encoding/decoding of token information.
 
