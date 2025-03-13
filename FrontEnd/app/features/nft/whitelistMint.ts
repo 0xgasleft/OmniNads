@@ -8,7 +8,6 @@ export interface whitelistMintArgs {
   collectionName: string 
   chainId: number
   walletClient: any
-  account: string
   value: bigint 
 }
 

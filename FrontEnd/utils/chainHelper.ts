@@ -1,4 +1,4 @@
-import collectionConfig from "@/config/collectionConfig"
+import collectionConfig, { CollectionConfig } from "@/config/collectionConfig"
 
 
 // 1. Chain ID constants
@@ -128,4 +128,43 @@ export function getCollectionContractAddress(
   }
   
   return address
+}
+
+export const getMinterChainId = (collectionName: string): number | null => {
+  const collection = collectionConfig[collectionName.toLowerCase()]
+  if (!collection) return null
+
+  const minterChainId = Object.entries(collection.contractAddresses).find(
+    ([_, contracts]) => contracts.minter
+  )?.[0]
+
+  return minterChainId ? Number(minterChainId) : null
+}
+
+export function getContractAddressesString(
+  collectionKey: string,
+  collection: CollectionConfig
+): string {
+  return collection.networks
+    .map((network) => {
+      const chainName = network.name
+      const contractObj = collection.contractAddresses[network.id]
+
+      if (!contractObj) {
+        return `${chainName}: Not Found`
+      }
+
+      if (collectionKey === "cultbears") {
+        return `${chainName}: ${contractObj.cultbears || "n/a"}`
+      }
+
+      if (contractObj.minter) {
+        return `${chainName}: ${contractObj.minter}`
+      } else if (contractObj.consumer) {
+        return `${chainName}: ${contractObj.consumer}`
+      }
+
+      return `${chainName}: Not Found`
+    })
+    .join(" | ")
 }

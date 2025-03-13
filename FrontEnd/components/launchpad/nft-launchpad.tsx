@@ -23,7 +23,7 @@ import BASE from "../../public/assets/icons/base.png"
 import SONEIUM from "../../public/assets/icons/soneium.png"
 import CustomConnectButton from "@/components/wallets/custom-connect-button"
 import { useWalletClient } from "wagmi"
-import { useAppDispatch } from "@/app/hooks"
+import { useAppDispatch, useAppSelector } from "@/app/hooks"
 import { toast } from "../ui/use-toast"
 import { mintMultiple } from "@/app/features/nft/mintMultipleThunk"
 import { publicMint } from "@/app/features/nft/publicMint"
@@ -41,6 +41,10 @@ import collectionConfig from "../../config/collectionConfig"
 import NFTMintPopup from "../nft-mint-popup"
 import { getMintInfo } from "@/app/features/nft/getMintInfo"
 import { requestCrossChainMint } from "@/app/features/nft/requestCrossChainMint"
+import { fetchMintedNFT } from "@/app/features/nft/fetchMintedNFT"
+import { parseMintedTokenId } from "@/utils/parseMintedTokenId"
+import { Log } from "viem"
+
 
 interface Rarity {
   name: string
@@ -58,7 +62,8 @@ const rarities: Rarity[] = [
 ]
 
 interface MintReceipt {
-  transactionHash: string
+  transactionHash: string;
+  logs: Log[];
 }
 
 interface RarityStatResponse {
@@ -116,7 +121,9 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
   const [mintCount, setMintCount] = useState(0)
   const [mintInfo, setMintInfo] = useState<{ totalSupply: number; maxSupply: number } | null>(null)
   const walletClient = useWalletClient()
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+
+  const mintedNFT = useAppSelector((state) => state.nft.mintedNFT)
 
   const chainIdFromWallet = walletClient?.data?.chain?.id || 84532
   const SUBGRAPH_URL = getSubgraphUrl(chainIdFromWallet)
@@ -135,11 +142,9 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
 
   useEffect(() => {
     async function fetchMintInfo() {
-      if (!walletClient?.data?.account) return
-
       try {
         const result = await dispatch(
-          getMintInfo({ collectionName, chainId: chainIdFromWallet, walletClient })
+          getMintInfo({ collectionName })
         ).unwrap()
 
         setMintInfo({
@@ -152,7 +157,7 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
     }
 
     fetchMintInfo()
-  }, [walletClient, chainIdFromWallet, dispatch]);
+  }, [dispatch]);
 
   const totalMinted = collectionName.toLowerCase() === "cultbears"
     ? dynamicRarities.reduce((acc, r) => acc + r.minted, 0) 
@@ -396,14 +401,13 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
               mintAmount: 1,
               rarity: hasRarities ? rarityMap[selectedRarity] : 0,
               chainId: chainIdFromWallet,
-              account,
               walletClient,
               value,
             })
           ).unwrap()
         } else {
           const { phase } = await dispatch(
-            getMintInfo({ walletClient, collectionName, chainId: chainIdFromWallet })
+            getMintInfo({ collectionName })
           ).unwrap()
 
           if (phase === 1) {
@@ -412,7 +416,6 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
                 collectionName,
                 chainId: chainIdFromWallet,
                 walletClient,
-                account,
                 value,
               })
             ).unwrap()
@@ -422,7 +425,6 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
                 collectionName,
                 chainId: chainIdFromWallet,
                 walletClient,
-                account,
                 value,
               })
             ).unwrap()
@@ -431,6 +433,18 @@ export default function NFTLaunchpad({ collectionName }: NFTLaunchpadProps) {
 
         const txReceipt = result as MintReceipt
         const txUrl = `${EXPLORER_URL}tx/${txReceipt.transactionHash}`
+        const mintedTokenId = parseMintedTokenId(txReceipt.logs)
+
+        if (mintedTokenId !== null) {
+          await dispatch(
+            fetchMintedNFT({
+              collectionName,
+              chainId,
+              walletClient,
+              tokenId: mintedTokenId,
+            })
+          ).unwrap()
+        }  
         setShowPopup(true)
 
         setTimeout(() => {

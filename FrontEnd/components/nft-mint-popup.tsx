@@ -1,20 +1,22 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import { X, Expand } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import collectionConfig from "@/config/collectionConfig" 
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Expand } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import collectionConfig from "@/config/collectionConfig";
+import { getContractAddressesString } from "@/utils/chainHelpers";
+import { useWalletClient } from "wagmi";
 
 interface NFTMintPopupProps {
-  isOpen: boolean
-  onClose: () => void
-  collectionKey: keyof typeof collectionConfig
+  isOpen: boolean;
+  onClose: () => void;
+  collectionKey: keyof typeof collectionConfig;
   nftData?: {
-    name?: string
-    image?: string
-  }
+    name?: string;
+    image?: string;
+  };
 }
 
 export default function NFTMintPopup({
@@ -23,28 +25,47 @@ export default function NFTMintPopup({
   collectionKey,
   nftData = {},
 }: NFTMintPopupProps) {
-  const [isVisible, setIsVisible] = useState(isOpen)
+  const [isVisible, setIsVisible] = useState(isOpen);
 
   useEffect(() => {
-    setIsVisible(isOpen)
-  }, [isOpen])
+    setIsVisible(isOpen);
+  }, [isOpen]);
 
   const handleClose = () => {
-    setIsVisible(false)
-    setTimeout(onClose, 300) 
+    setIsVisible(false);
+    setTimeout(onClose, 300);
+  };
+
+  const walletClient = useWalletClient()
+  const chainName = walletClient?.data?.chain?.name
+
+  const collection = collectionConfig[collectionKey];
+
+  {/* Can be used to have mulitple fallback images if needed */} 
+
+  let defaultImage: string | undefined
+  switch (chainName) {
+    case "Monad Testnet":
+      defaultImage = collection.images[0]?.src
+      break
+    case "Arbitrum Sepolia":
+      defaultImage = collection.images[1]?.src
+      break
+    case "OP Sepolia":
+      defaultImage = collection.images[2]?.src
+      break
+    default:
+      defaultImage = collection.images[0]?.src
   }
 
-  const collection = collectionConfig[collectionKey]
   const defaultNFTData = {
     name: collection.title,
-    image: collection.images[0]?.src || "/placeholder.svg?height=400&width=400",
-  }
-  const mergedNFTData = { ...defaultNFTData, ...nftData }
+    image: collection.images[0]?.src
+  };
+  
+  const mergedNFTData = { ...defaultNFTData, ...nftData };  
 
-  const contractAddressesString = Object.entries(collection.contractAddresses)
-  .map(([chainId, address]) => `${chainId}: ${address}`)
-  .join(" | ");
-
+  const contractAddressesString = getContractAddressesString(collectionKey, collection);
 
   return (
     <AnimatePresence>
@@ -84,49 +105,50 @@ export default function NFTMintPopup({
                 <div className="mb-6 space-y-1">
                   <p className="text-gray-400">You have collected</p>
                   <p className="font-medium">{mergedNFTData.name}</p>
-                  <p className="text-gray-400">and it's now in your wallet.</p>
+                  <p className="text-gray-400">and it's now in your Monad wallet.</p>
                 </div>
 
-                <Button className="w-full bg-[#2a2a38] hover:bg-[#3a3a48] text-white">
+                {/* To be added */}
+                <Button className="w-full bg-[#2a2a38] hover:bg-[#3a3a48] text-white hidden">
                   View Item
                 </Button>
               </div>
 
               {/* Right Column – Collection Details */}
               <div className="bg-[#1a1a24] p-6 md:max-w-md">
+               
                 <div className="mb-4">
-                 <div className="flex justify-between">
-                  <h3 className="mb-2 text-xl font-bold">Collection Details</h3>
-                  <button
-                    onClick={handleClose}
-                    className="rounded-full p-1"
-                  >
-                    <X className="h-5 w-5 -mt-4" />
+                <div className="flex justify-between">
+                <h3 className="mb-2 text-xl font-bold">Collection Details</h3>
+                <button onClick={handleClose} className="rounded-full p-1 -mt-5">
+                    <X className="h-5 w-5 mt-1" />
                   </button>
-                  </div>
+                </div>
                   <p className="text-sm text-gray-400">{collection.about}</p>
                 </div>
                 <div className="mb-4">
                   <h4 className="text-lg font-semibold">Contract Address</h4>
                   <p className="text-sm break-all">{contractAddressesString}</p>
                 </div>
-                <div className="mb-4">
-                  <h4 className="text-lg font-semibold">Networks</h4>
-                  <div className="flex gap-2">
-                    {collection.networks.map((network) => (
-                      <div key={network.id} className="flex items-center gap-2">
-                        <Image
-                          src={network.icon}
-                          alt={network.name}
-                          width={20}
-                          height={20}
-                          className="rounded-full"
-                        />
-                        <span className="text-sm">{network.name}</span>
-                      </div>
-                    ))}
+                {collection.networks && (
+                  <div className="mb-4">
+                    <h4 className="text-lg font-semibold">Networks</h4>
+                    <div className="flex gap-2">
+                      {collection.networks.map((network) => (
+                        <div key={network.id} className="flex items-center gap-2">
+                          <Image
+                            src={network.icon}
+                            alt={network.name}
+                            width={20}
+                            height={20}
+                            className="rounded-full"
+                          />
+                          <span className="text-sm">{network.name}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
                 {collection.mintStages && (
                   <div className="mb-4">
                     <h4 className="text-lg font-semibold">Mint Stages</h4>
@@ -141,6 +163,7 @@ export default function NFTMintPopup({
                     </ul>
                   </div>
                 )}
+
                 <Button className="w-full bg-purple hover:bg-purple700 text-white">
                   View Collection
                 </Button>
@@ -150,5 +173,5 @@ export default function NFTMintPopup({
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

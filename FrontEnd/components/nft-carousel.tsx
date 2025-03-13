@@ -1,29 +1,21 @@
-"use client"
+// src/components/NftCarousel.tsx
 
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState, AppDispatch } from "@/app/store"
-
-// Redux slices
 import { clearNFTs } from "@/app/features/nft/nftSlice"
 import { setSelectedTokenId } from "@/app/features/bridge/bridgeSlice"
-import { fetchOwnedNFTs } from "@/app/features/nft/nftThunks"
-
-// Wagmi
+import { fetchOwnedNFTs } from "@/app/features/nft/fetchOwnedNFTs"
 import { useWalletClient } from "wagmi"
-
-// UI
-import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import Loader from "./loader"
-
-// Helpers
 import { getPublicClient } from "@/config/getPublicClient"
 import collectionConfig from "@/config/collectionConfig"
 import { ChainNames } from "@/utils/chainUtils"
+import { Card, CardContent } from "@/components/ui/card"
 
 interface NftCarouselProps {
-  collectionName: string 
+  collectionName: string
 }
 
 export function NftCarousel({ collectionName }: NftCarouselProps) {
@@ -39,17 +31,16 @@ export function NftCarousel({ collectionName }: NftCarouselProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   const chainId = walletClient?.data?.chain?.id
-  const chainName = walletClient?.data?.chain?.name as ChainNames;
+  const chainName = walletClient?.data?.chain?.name as ChainNames
 
   const lowerName = collectionName?.toLowerCase()
   const config = collectionConfig[lowerName]
   const contractAddress =
     config?.contractAddresses && chainId
-      ? config.contractAddresses[chainId]
+      ? config.contractAddresses[chainId].minter || config.contractAddresses[chainId].consumer || config.contractAddresses[chainId].cultbears
       : undefined
 
   const publicClient = chainName ? getPublicClient(chainName) : null
-
 
   if (publicClient && walletClient && chainId) {
     console.log(
@@ -71,7 +62,7 @@ export function NftCarousel({ collectionName }: NftCarouselProps) {
     } else {
       const timer = setTimeout(() => {
         setDelayedLoading(false)
-      }, 1500) 
+      }, 1500)
       return () => clearTimeout(timer)
     }
   }, [loading])
@@ -79,7 +70,7 @@ export function NftCarousel({ collectionName }: NftCarouselProps) {
   useEffect(() => {
     const ownerAddress = walletClient?.data?.account?.address
     if (!chainId || !ownerAddress || !contractAddress) {
-      return 
+      return
     }
 
     dispatch(clearNFTs())
@@ -87,16 +78,30 @@ export function NftCarousel({ collectionName }: NftCarouselProps) {
     dispatch(
       fetchOwnedNFTs({
         ownerAddress,
-        contractAddress,
         chainId,
+        collectionName
       })
     )
-  }, [dispatch, chainId, walletClient?.data?.account?.address, contractAddress, lastRefresh])
+  }, [
+    dispatch,
+    chainId,
+    walletClient?.data?.account?.address,
+    contractAddress,
+    lastRefresh,
+    collectionName,
+  ])
 
   const handleRetry = () => {
     const ownerAddress = walletClient?.data?.account?.address
     if (!chainId || !ownerAddress || !contractAddress) return
-    dispatch(fetchOwnedNFTs({ ownerAddress, contractAddress, chainId }))
+
+    dispatch(
+      fetchOwnedNFTs({
+        ownerAddress,
+        chainId,
+        collectionName
+      })
+    )
   }
 
   if (delayedLoading) {
@@ -154,7 +159,7 @@ export function NftCarousel({ collectionName }: NftCarouselProps) {
                     className="w-full h-32 object-cover rounded-lg mb-4"
                   />
                   <h3 className="text-sm font-semibold text-center truncate">
-                    {nft.name ?? "NFT"} #{nft.tokenId}
+                    {nft.name ?? "NFT"}
                   </h3>
                 </CardContent>
               </Card>
