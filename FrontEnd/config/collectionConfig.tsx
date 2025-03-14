@@ -222,18 +222,27 @@ const collectionConfig: Record<string, CollectionConfig> = {
     ],
     mintStages: [
       { name: "Early Access", status: "ENDED", limit: "1 PER WALLET", details: "Free Mint" },
+      { name: "Public Mint", status: "LIVE", limit: "1 PER WALLET", details: "Free Mint" },
     ],
     milestones: [
-      { percentage: "5%", title: "Initial Launch: Omni Nads NFT drop on Ethereum Sepolia" },
-      { percentage: "50%", title: "Cross-Chain Expansion: Nads available on multiple testnets" },
+      { percentage: "15%", title: "Initial Launch: Omni Nads NFT FREE Mint on Monad Testnet, Arbitrum and OPtimism Sepolia" },
+      { percentage: "25%", title: "Testnet Campaigns: Collaborate with 10+ Monad native partners to launch campaigns and validate dynamic NFT evolution." },
+      { percentage: "45%", title: "Feature Unlocks: Activate unique NFT transformations through on-chain quests, gameplay, and partner events." },
+      { percentage: "75%", title: "Infrastructure Build-out: Develop an omnichain framework supporting dynamic evolution, extended leaderboards, and detailed metrics." },
       { percentage: "100%", title: "Mainnet Release: Full feature launch with unique utilities" },
     ],
     teamMembers: [
       {
-        name: "NadsAdmin",
-        role: "Project Lead",
-        image: "/assets/founder.jpg",
+        name: "Nads Lead",
+        role: "Founder",
+        image: "/assets/team/team-member-1.png" ,
         twitter: "https://x.com/TomMarxCult",
+      },
+      {
+        name: "Nads Architect",
+        role: "Smart Contract Engineer",
+        image: "/assets/team/team-member-2.png" ,
+        twitter: "https://x.com/onlyforweb3",
       },
     ],
     about: "Omni Nads is a cross-chain NFT project designed to break boundaries and expand the NFT ecosystem across multiple testnets.",
@@ -244,9 +253,9 @@ const collectionConfig: Record<string, CollectionConfig> = {
       website: "https://cultbearsdao.com",
     },
     baseUris: {
-      10143: "https://arweave.net/XI2afr4wHl_M78ovIGYzCPvU0O8126DndmZ-L3VjrMY/monad/",
-      421614: "https://arweave.net/XI2afr4wHl_M78ovIGYzCPvU0O8126DndmZ-L3VjrMY/arbitrum/",
-      11155420: "https://arweave.net/XI2afr4wHl_M78ovIGYzCPvU0O8126DndmZ-L3VjrMY/optimism/",
+      10143: "https://arweave.net/KTNUM70p_uS38bAUzrwmBFiMAIrXoiBQFzIGTRfDMu4/monad/",
+      421614: "https://arweave.net/KTNUM70p_uS38bAUzrwmBFiMAIrXoiBQFzIGTRfDMu4/arbitrum/",
+      11155420: "https://arweave.net/KTNUM70p_uS38bAUzrwmBFiMAIrXoiBQFzIGTRfDMu4/optimism/",
     },
   },
 }
